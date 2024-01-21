@@ -10,22 +10,12 @@ const prompts = [
 const addDepartment = [
     {
         type: 'input',
-        message: 'Please enter the department ID',
-        name: 'departmentID'
-    },
-    {
-        type: 'input',
-        message: 'Please enter the department name',
+        message: 'Please enter the name of the department',
         name: 'departmentName'
     },
 ];
 
 const addRole = [
-    {
-        type: 'input',
-        message: 'Please enter the role ID',
-        name: 'roleID'
-    },
     {
         type: 'input',
         message: 'Please enter the role title',
@@ -37,18 +27,14 @@ const addRole = [
         name: 'roleSalary'
     },
     {
-        type: 'input',
-        message: 'Please enter the department id',
-        name: 'departmentID'
+        type: 'list',
+        message: 'Which department does the role belong to?',
+        choices: [],
+        name: 'roleDepartment'
     },
 ];
 
 const addEmployee = [
-    {
-        type: 'input',
-        message: 'Please enter the employee ID',
-        name: 'employeeID'
-    },
     {
         type: 'input',
         message: 'Please enter the employee first name',
@@ -61,14 +47,31 @@ const addEmployee = [
     },
     {
         type: 'input',
-        message: 'Please enter the role id',
-        name: 'roleID'
+        message: 'Please enter the employee role',
+        name: 'employeeRole'
     },
     {
         type: 'input',
-        message: 'Please enter the manager id',
-        name: 'managerID'
+        message: 'Please enter the employee manager',
+        name: 'employeeManager'
+    },
+];
+
+const updateEmployee = [
+    {
+        type: 'list',
+        message: `Which employee's role do you want to update?`,
+        choices: [],
+        name: 'updateEmployeeName'
+    },
+    {
+        type: 'list',
+        message: `Which role do you want to assign to the selected employee?`,
+        choices: [],
+        name: 'updateEmployeeRole'
     },
 ]
+
+
 
 module.exports = { prompts, addDepartment, addRole, addEmployee};
