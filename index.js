@@ -125,9 +125,6 @@ const addToEmployee = () => {
             console.error(`Oops! Error occured when updating choices for employee role`)
         };
 
-
-
-
         db.query("SELECT id, first_name, last_name FROM employee", function (err, results) {
             if (err) throw err;
             const existingEmployees = results.map(employee => ({
@@ -144,8 +141,6 @@ const addToEmployee = () => {
             }
 
             inquirer.prompt(addEmployee).then((answers) => {
-                console.log('Employee Manager:', answers.employeeManager);
-                console.log('Existing Employees:', existingEmployees);
                 db.query("INSERT INTO employee SET ?", {
                     first_name: answers.employeeFirst,
                     last_name: answers.employeeLast,
