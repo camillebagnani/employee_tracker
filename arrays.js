@@ -46,13 +46,15 @@ const addEmployee = [
         name: 'employeeLast'
     },
     {
-        type: 'input',
-        message: 'Please enter the employee role',
+        type: 'list',
+        message: `What is the employee's role?`,
+        choices: [],
         name: 'employeeRole'
     },
     {
-        type: 'input',
-        message: 'Please enter the employee manager',
+        type: 'list',
+        message: `Who is the employee's manager?`,
+        choices: [],
         name: 'employeeManager'
     },
 ];

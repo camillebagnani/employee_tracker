@@ -36,7 +36,7 @@ const init = () => {
 
             } else if (choice === 'Add Employee') {
 
-                addToDatabase(addEmployee, "SELECT * FROM department");
+                addToEmployee();
 
             } else if (choice === 'Update Employee Role') {
 
@@ -99,11 +99,63 @@ const addToRole = () => {
             db.query("INSERT INTO role SET ?", {
                 title: answers.roleTitle,
                 salary: answers.roleSalary,
-                department_id: answers.roleDepartment 
+                department_id: answers.roleDepartment
             }, function (err) {
                 if (err) throw err;
                 console.log("Role added");
                 init();
+            });
+        });
+    });
+};
+
+const addToEmployee = () => {
+    db.query("SELECT id, title FROM role", function (err, results) {
+        if (err) throw err;
+        const existingRoles = results.map(role => ({
+            value: role.id,
+            name: role.title
+        }));
+
+        const employeeRoleQuestion = addEmployee.find(question => question.name === 'employeeRole');
+
+        if (employeeRoleQuestion && employeeRoleQuestion.type === 'list') {
+            employeeRoleQuestion.choices = existingRoles;
+        } else {
+            console.error(`Oops! Error occured when updating choices for employee role`)
+        };
+
+
+
+
+        db.query("SELECT id, first_name, last_name FROM employee", function (err, results) {
+            if (err) throw err;
+            const existingEmployees = results.map(employee => ({
+                value: employee.id, 
+                name: `${employee.first_name} ${employee.last_name}`
+            }));
+
+            const employeeManagerQuestion = addEmployee.find(question => question.name === 'employeeManager');
+
+            if (employeeManagerQuestion && employeeManagerQuestion.type === 'list') {
+                employeeManagerQuestion.choices = existingEmployees;
+            } else {
+                console.error(`Oops! Error occured when updating choices for manager`)
+            }
+
+            inquirer.prompt(addEmployee).then((answers) => {
+                console.log('Employee Manager:', answers.employeeManager);
+                console.log('Existing Employees:', existingEmployees);
+                db.query("INSERT INTO employee SET ?", {
+                    first_name: answers.employeeFirst,
+                    last_name: answers.employeeLast,
+                    role_id: answers.employeeRole,
+                    manager_id: answers.employeeManager
+                }, function (err) {
+                    if (err) throw err;
+                    console.log("Employee added");
+                    init();
+                });
             });
         });
     });
