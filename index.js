@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const { prompts, addDepartment, addRole, addEmployee} = require('./arrays')
+const { prompts, addDepartment, addRole, addEmployee } = require('./arrays')
 
 const db = mysql.createConnection(
     {
@@ -68,7 +68,7 @@ const addToDepartment = () => {
     inquirer.prompt(addDepartment).then((answers) => {
         db.query("INSERT INTO department SET ?", {
             name: answers.departmentName,
-        }, function (err){
+        }, function (err) {
             if (err) throw err;
             console.log("Department added");
             init();
@@ -77,15 +77,34 @@ const addToDepartment = () => {
 };
 
 const addToRole = () => {
-    inquirer.prompt(addRole).then((answers) => {
-        db.query("INSERT INTO role SET ?", {
-            title: answers.roleTitle,
-            salary: answers.roleSalary,
-            department_id: answers.roleDepartment // TO DO: validate department name and make this department id equal the real department id
-        }, function (err){
-            if (err) throw err;
-            console.log("Role added");
-            init();
+    db.query("SELECT id, name FROM department", function (err, results) {
+        if (err) throw err;
+
+        const existingDepartments = results.map(department => ({
+            value: department.id,
+            name: department.name
+        }));
+
+        const roleDepartmentQuestion = addRole.find(question => question.name === 'roleDepartment');
+
+        if (roleDepartmentQuestion && roleDepartmentQuestion.type === 'list') {
+            roleDepartmentQuestion.choices = existingDepartments;
+        } else {
+            console.error("Oops! Error occured when updating choices for role department");
+        };
+
+        inquirer.prompt(addRole).then((answers) => {
+            // const selectedDepartmentId = parseInt(answers.roleDepartment);
+            // const selectedDepartment = existingDepartments.find(department => department.id === answers.roleDepartment);
+            db.query("INSERT INTO role SET ?", {
+                title: answers.roleTitle,
+                salary: answers.roleSalary,
+                department_id: answers.roleDepartment 
+            }, function (err) {
+                if (err) throw err;
+                console.log("Role added");
+                init();
+            });
         });
     });
 };
@@ -118,4 +137,6 @@ const addToRole = () => {
 
                 // addToDatabase(addDepartment, `"INSERT INTO department (id, name) VALUES ('7', '${addDepartment.departmentName}')";`);
 
+
+// TO DO: validate department name and make this department id equal the real department id
 
