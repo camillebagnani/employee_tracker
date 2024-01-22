@@ -1,3 +1,4 @@
+// Serves as the main menu when Inquirer is called
 const prompts = [
     {
         type: 'list',
@@ -7,6 +8,7 @@ const prompts = [
     },
 ];
 
+// Inquirer questions to add new department
 const addDepartmentArray = [
     {
         type: 'input',
@@ -15,6 +17,7 @@ const addDepartmentArray = [
     },
 ];
 
+// Inquirer questions to add new role
 const addRoleArray = [
     {
         type: 'input',
@@ -34,6 +37,7 @@ const addRoleArray = [
     },
 ];
 
+// Inquirer questions to add new employee
 const addEmployeeArray = [
     {
         type: 'input',
@@ -59,6 +63,7 @@ const addEmployeeArray = [
     },
 ];
 
+// Inquirer questions to update an employee's role
 const updateEmployeeArray = [
     {
         type: 'list',
