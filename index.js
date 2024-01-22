@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const { prompts, addDepartment, addRole, addEmployee } = require('./arrays')
+const { prompts, addDepartmentArray, addRoleArray, addEmployeeArray, updateEmployeeArray } = require('./arrays')
 
 const db = mysql.createConnection(
     {
@@ -28,17 +28,19 @@ const init = () => {
 
             } else if (choice === 'Add Department') {
 
-                addToDepartment();
+                addDepartment();
 
             } else if (choice === 'Add Role') {
 
-                addToRole();
+                addRole();
 
             } else if (choice === 'Add Employee') {
 
-                addToEmployee();
+                addEmployee();
 
             } else if (choice === 'Update Employee Role') {
+
+                updateEmployee();
 
             } else {
                 console.log('Use Control + C to quit application')
@@ -64,8 +66,8 @@ const viewDatabase = (query) => {
     });
 };
 
-const addToDepartment = () => {
-    inquirer.prompt(addDepartment).then((answers) => {
+const addDepartment = () => {
+    inquirer.prompt(addDepartmentArray).then((answers) => {
         db.query("INSERT INTO department SET ?", {
             name: answers.departmentName,
         }, function (err) {
@@ -76,7 +78,7 @@ const addToDepartment = () => {
     });
 };
 
-const addToRole = () => {
+const addRole = () => {
     db.query("SELECT id, name FROM department", function (err, results) {
         if (err) throw err;
 
@@ -85,7 +87,7 @@ const addToRole = () => {
             name: department.name
         }));
 
-        const roleDepartmentQuestion = addRole.find(question => question.name === 'roleDepartment');
+        const roleDepartmentQuestion = addRoleArray.find(question => question.name === 'roleDepartment');
 
         if (roleDepartmentQuestion && roleDepartmentQuestion.type === 'list') {
             roleDepartmentQuestion.choices = existingDepartments;
@@ -93,9 +95,7 @@ const addToRole = () => {
             console.error("Oops! Error occured when updating choices for role department");
         };
 
-        inquirer.prompt(addRole).then((answers) => {
-            // const selectedDepartmentId = parseInt(answers.roleDepartment);
-            // const selectedDepartment = existingDepartments.find(department => department.id === answers.roleDepartment);
+        inquirer.prompt(addRoleArray).then((answers) => {
             db.query("INSERT INTO role SET ?", {
                 title: answers.roleTitle,
                 salary: answers.roleSalary,
@@ -109,7 +109,7 @@ const addToRole = () => {
     });
 };
 
-const addToEmployee = () => {
+const addEmployee = () => {
     db.query("SELECT id, title FROM role", function (err, results) {
         if (err) throw err;
         const existingRoles = results.map(role => ({
@@ -117,7 +117,7 @@ const addToEmployee = () => {
             name: role.title
         }));
 
-        const employeeRoleQuestion = addEmployee.find(question => question.name === 'employeeRole');
+        const employeeRoleQuestion = addEmployeeArray.find(question => question.name === 'employeeRole');
 
         if (employeeRoleQuestion && employeeRoleQuestion.type === 'list') {
             employeeRoleQuestion.choices = existingRoles;
@@ -128,11 +128,11 @@ const addToEmployee = () => {
         db.query("SELECT id, first_name, last_name FROM employee", function (err, results) {
             if (err) throw err;
             const existingEmployees = results.map(employee => ({
-                value: employee.id, 
+                value: employee.id,
                 name: `${employee.first_name} ${employee.last_name}`
             }));
 
-            const employeeManagerQuestion = addEmployee.find(question => question.name === 'employeeManager');
+            const employeeManagerQuestion = addEmployeeArray.find(question => question.name === 'employeeManager');
 
             if (employeeManagerQuestion && employeeManagerQuestion.type === 'list') {
                 employeeManagerQuestion.choices = existingEmployees;
@@ -140,7 +140,7 @@ const addToEmployee = () => {
                 console.error(`Oops! Error occured when updating choices for manager`)
             }
 
-            inquirer.prompt(addEmployee).then((answers) => {
+            inquirer.prompt(addEmployeeArray).then((answers) => {
                 db.query("INSERT INTO employee SET ?", {
                     first_name: answers.employeeFirst,
                     last_name: answers.employeeLast,
@@ -156,34 +156,53 @@ const addToEmployee = () => {
     });
 };
 
-// const addToDatabase = (addingArray, query) => {
-//     inquirer.prompt(addingArray)
-//         .then((answers) => {
-//             db.connect(function (err) {
-//                 if (err) throw err;
-//                 db.query(query, function (err, results) {
-//                     if (err) throw err;
-//                     console.log(`Added`);
-//                     init();
-//                 });
-//             });
-//         });
-// };
+//TODO: Fix so that it doens't turn update into null
+const updateEmployee = () => {
+    db.query("SELECT id, first_name, last_name FROM employee", function (err, results) {
+        if (err) throw err;
+        const existingEmployees = results.map(employee => ({
+            value: employee.id,
+            name: `${employee.first_name} ${employee.last_name}`
+        }));
 
-    // inquirer.prompt(addDepartment)
-                // .then(() => {
-                //     const query = `INSERT INTO department (id, name) VALUES (?)`
-                //     const params = [addDepartment.departmentName];
+        const updatedEmployeeQuestion = updateEmployeeArray.find(question => question.name === 'updateEmployeeName');
 
-                //     db.query(query, params, (err, result) => {
-                //             if (err) throw err;
-                //             console.log(`Added`);
-                //             init();
-                //           });
-                //     });
+        if (updatedEmployeeQuestion && updatedEmployeeQuestion.type === 'list') {
+            updatedEmployeeQuestion.choices = existingEmployees;
+        } else {
+            console.error(`Oops! Error occured when displaying employees`)
+        };
 
-                // addToDatabase(addDepartment, `"INSERT INTO department (id, name) VALUES ('7', '${addDepartment.departmentName}')";`);
+        db.query("SELECT id, title FROM role", function (err, results) {
+            if (err) throw err;
+            const existingRoles = results.map(role => ({
+                value: role.id,
+                name: role.title
+            }));
 
+            const updatedRoleQuestion = updateEmployeeArray.find(question => question.name === 'updateEmployeeRole');
 
-// TO DO: validate department name and make this department id equal the real department id
+            if (updatedRoleQuestion && updatedRoleQuestion.type === 'list') {
+                updatedRoleQuestion.choices = existingRoles;
+            } else {
+                console.error(`Oops! Error occured when updating choices for employee role`)
+            }
+        });
 
+        inquirer.prompt(updateEmployeeArray).then((answers) => {
+            db.query("UPDATE employee SET first_name = ?, last_name = ?, role_id = ? WHERE id = ?",
+                [answers.employeeFirst,
+                answers.employeeLast,
+                answers.employeeRole,
+                answers.updateEmployeeName
+                ], function (err) {
+                    if (err) throw err;
+                    console.log(`Employee updated`);
+                    init();
+                });
+        });
+    });
+};
+
+//TOD: Refactor all DRY
+// Make it so manager can be none

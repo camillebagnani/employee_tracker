@@ -7,7 +7,7 @@ const prompts = [
     },
 ];
 
-const addDepartment = [
+const addDepartmentArray = [
     {
         type: 'input',
         message: 'Please enter the name of the department',
@@ -15,7 +15,7 @@ const addDepartment = [
     },
 ];
 
-const addRole = [
+const addRoleArray = [
     {
         type: 'input',
         message: 'Please enter the role title',
@@ -34,7 +34,7 @@ const addRole = [
     },
 ];
 
-const addEmployee = [
+const addEmployeeArray = [
     {
         type: 'input',
         message: 'Please enter the employee first name',
@@ -59,7 +59,7 @@ const addEmployee = [
     },
 ];
 
-const updateEmployee = [
+const updateEmployeeArray = [
     {
         type: 'list',
         message: `Which employee's role do you want to update?`,
@@ -76,4 +76,4 @@ const updateEmployee = [
 
 
 
-module.exports = { prompts, addDepartment, addRole, addEmployee};
+module.exports = { prompts, addDepartmentArray, addRoleArray, addEmployeeArray, updateEmployeeArray};
