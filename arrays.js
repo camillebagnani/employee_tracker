@@ -79,6 +79,4 @@ const updateEmployeeArray = [
     },
 ]
 
-
-
 module.exports = { prompts, addDepartmentArray, addRoleArray, addEmployeeArray, updateEmployeeArray};

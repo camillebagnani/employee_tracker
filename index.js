@@ -53,7 +53,7 @@ const init = () => {
             console.log(error);
             console.log('Oops! Something went wrong.')
         })
-}
+};
 
 
 init();
@@ -70,18 +70,6 @@ const viewDatabase = (query) => {
         });
     });
 };
-
-// const addDepartment = () => {
-//     inquirer.prompt(addDepartmentArray).then((answers) => {
-//         db.query("INSERT INTO department SET ?", {
-//             name: answers.departmentName,
-//         }, function (err) {
-//             if (err) throw err;
-//             console.log("Department added");
-//             init();
-//         });
-//     });
-// };
 
 // Uses runInquirer function to initialize Inquirer with the parameters and init() function
 const addDepartment = () => {
@@ -181,7 +169,6 @@ const addEmployee = () => {
     });
 };
 
-//TODO: Fix so that it doens't turn update into null
 const updateEmployee = () => {
     // Gets id, first and last name from employee table in order to create an array of existing employees
     db.query("SELECT id, first_name, last_name FROM employee", function (err, results) {
@@ -221,10 +208,10 @@ const updateEmployee = () => {
             }
             // Inquirer uses updatedEmployeeArray questions and takes the answers in for the mySQL query
             inquirer.prompt(updateEmployeeArray).then((answers) => {
-                db.query("UPDATE employee SET first_name = ?, last_name = ?, role_id = ? WHERE id = ?",
-                    [answers.employeeFirst, // Updates the first name with the answer from the employeeFirst question
-                    answers.employeeLast, // Updates the last name with the answer from the employeeLast question
-                    answers.employeeRole, // Updates the role id with the answer from the employeeRole question
+                console.log(answers);
+                db.query("UPDATE employee SET role_id = ? WHERE id = ?",
+                    [
+                    answers.updateEmployeeRole, // Updates the role id with the answer from the employeeRole question
                     answers.updateEmployeeName // the employee's id is the condition that lets the table know where to update 
                     ], function (err) {
                         if (err) throw err;
@@ -236,5 +223,3 @@ const updateEmployee = () => {
     });
 };
 
-//TODO: Refactor all DRY
-// Make it so manager can be none
